@@ -1,0 +1,5 @@
+<app-header [usernameInput]="userInfo?.name"></app-header>
+<app-main *ngIf="isSignedIn; else login"></app-main>
+<ng-template #login>
+    <app-login></app-login>
+</ng-template>
