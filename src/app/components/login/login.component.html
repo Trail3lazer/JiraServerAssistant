@@ -1,1 +1,32 @@
-<p>login works!</p>
+<h1>Enter your Jira credentials</h1>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-group">
+    <div class="row">
+        <div class="form-group col-6 mb-2">
+            <input
+                name="username"
+                type="text"
+                class="form-control"
+                placeholder="Username"
+                formControlName="username"
+                autocomplete="username"
+                [ngClass]="{ 'is-invalid': usernameControl.touched && usernameControl.invalid }"
+                required
+            />
+        </div>
+        <div class="form-group col-6 mb-2">
+            <input
+                name="password"
+                type="password"
+                class="form-control"
+                placeholder="Password"
+                formControlName="password"
+                [ngClass]="{ 'is-invalid': passwordControl.touched && passwordControl.invalid }"
+                autocomplete="current-password"
+                required
+            />
+        </div>
+    </div>
+    <div class="text-center form-group mb-2">
+        <button class="btn btn-primary col-6 mx-auto">Submit</button>
+    </div>
+</form>

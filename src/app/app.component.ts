@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
-import { AuthService } from './services/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AuthService } from './services/auth/auth.service';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.sass'],
 })
-export class AppComponent {
-    public isSignedIn = this.authService.isSignedIn;
-    public userInfo;
+export class AppComponent implements OnInit {
+    public isSignedIn$: Observable<boolean>;
     constructor(private readonly authService: AuthService) {}
+    ngOnInit() {
+        this.isSignedIn$ = this.authService.isSignedIn$;
+    }
 }

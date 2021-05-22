@@ -1,6 +1,13 @@
 <div class="container bg-primary text-white">
     <div class="row d-flex">
         <h1 class="col">JSA</h1>
-        <p class="col my-auto text-right">{{ username }}</p>
+        <div class="col my-auto text-right">
+            <button *ngIf="isSignedIn$ | async; else login" class="btn btn-outline-light" (click)="signOut()">
+                Sign Out
+            </button>
+            <ng-template #login>
+                <p>Log in to use the app</p>
+            </ng-template>
+        </div>
     </div>
 </div>

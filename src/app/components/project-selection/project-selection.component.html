@@ -1,0 +1,10 @@
+<form *ngIf="projects$ | async as projects">
+    <h2>Please select a project to work in</h2>
+    <div class="form-check pb-2" *ngFor="let project of projects; trackBy: trackByProjectId">
+        <input class="form-check-input" type="radio" name="{{ project.name + project.id }}" />
+        <label class="form-check-label" for="{{ project.name + project.id }}"
+            >{{ project.name }} / {{ project.key }}</label
+        >
+    </div>
+    <button class="btn btn-primary pb-2"></button>
+</form>
