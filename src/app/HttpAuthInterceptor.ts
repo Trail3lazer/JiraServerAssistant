@@ -16,7 +16,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
             const req2 = req.clone({
                 withCredentials: true,
                 setHeaders: {
-                    Cookie: req.headers.get('Cookie') + this.authService.getCookieHeader(),
+                    'Set-Cookie': req.headers.get('Cookie') + this.authService.getCookieHeader(),
                 },
             });
 

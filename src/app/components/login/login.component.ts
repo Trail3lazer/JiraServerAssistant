@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Observable, pipe } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -11,23 +13,18 @@ export class LoginComponent implements OnInit {
     public loginForm: FormGroup;
     constructor(private readonly authService: AuthService) {}
 
-    public get usernameControl() {
-        return this.loginForm.get('username');
-    }
-    public get passwordControl() {
-        return this.loginForm.get('password');
+    public get urlControl() {
+        return this.loginForm.get('url');
     }
 
     ngOnInit(): void {
         this.loginForm = new FormGroup({
-            username: new FormControl('', { validators: [Validators.required] }),
-            password: new FormControl('', { validators: [Validators.required] }),
+            url: new FormControl('', { validators: [Validators.required] }),
         });
     }
 
-    public onSubmit() {
-        const username = this.usernameControl.value;
-        const password = this.passwordControl.value;
-        this.authService.signIn(username, password);
+    public onSubmit(): void {
+        const url = this.urlControl.value;
+        this.authService.getJiraCredentials(url).pipe(take(1)).subscribe();
     }
 }

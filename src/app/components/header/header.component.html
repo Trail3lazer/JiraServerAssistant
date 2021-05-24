@@ -1,13 +1,10 @@
-<div class="container bg-primary text-white">
-    <div class="row d-flex">
-        <h1 class="col">JSA</h1>
-        <div class="col my-auto text-right">
-            <button *ngIf="isSignedIn$ | async; else login" class="btn btn-outline-light" (click)="signOut()">
-                Sign Out
-            </button>
-            <ng-template #login>
-                <p>Log in to use the app</p>
-            </ng-template>
-        </div>
+<div class="container bg-primary text-white mb-2">
+    <div class="d-flex justify-content-between">
+        <h1>JSA</h1>
+        <div *ngIf="isSignedIn$ | async; else signIn"></div>
+        <ng-template class="ms-auto d-flex" #signIn>
+            <p class="my-auto">Log in to use the app</p>
+        </ng-template>
+        <button (click)="click()">refresh</button>
     </div>
 </div>

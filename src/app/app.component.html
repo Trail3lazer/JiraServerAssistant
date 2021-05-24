@@ -1,6 +1,6 @@
 <app-header></app-header>
 <div class="container">
-    <app-main *ngIf="isSignedIn$ | async; else login"></app-main>
+    <app-main *ngIf="vm$ | async; else login"></app-main>
     <ng-template #login>
         <app-login></app-login>
     </ng-template>

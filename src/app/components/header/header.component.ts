@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -14,4 +14,6 @@ export class HeaderComponent implements OnInit {
     public signOut() {
         this.authService.signOut();
     }
+
+    public click(): void {}
 }

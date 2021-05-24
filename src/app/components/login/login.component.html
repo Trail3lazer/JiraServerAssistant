@@ -1,32 +1,16 @@
-<h1>Enter your Jira credentials</h1>
+<h1 class="my-2">Enter your Jira server website</h1>
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-group">
-    <div class="row">
-        <div class="form-group col-6 mb-2">
-            <input
-                name="username"
-                type="text"
-                class="form-control"
-                placeholder="Username"
-                formControlName="username"
-                autocomplete="username"
-                [ngClass]="{ 'is-invalid': usernameControl.touched && usernameControl.invalid }"
-                required
-            />
-        </div>
-        <div class="form-group col-6 mb-2">
-            <input
-                name="password"
-                type="password"
-                class="form-control"
-                placeholder="Password"
-                formControlName="password"
-                [ngClass]="{ 'is-invalid': passwordControl.touched && passwordControl.invalid }"
-                autocomplete="current-password"
-                required
-            />
-        </div>
-    </div>
-    <div class="text-center form-group mb-2">
-        <button class="btn btn-primary col-6 mx-auto">Submit</button>
+    <div class="d-flex justify-content-left">
+        <input
+            name="jiraUrl"
+            type="url"
+            class="form-control mb-3 me-2"
+            placeholder="https://jira.example.com"
+            formControlName="url"
+            autocomplete="url"
+            [ngClass]="{ 'is-invalid': urlControl.touched && urlControl.invalid }"
+            required
+        />
+        <button class="btn btn-primary mb-3">Submit</button>
     </div>
 </form>

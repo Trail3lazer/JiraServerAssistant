@@ -15,7 +15,8 @@
             }
         ]
     },
-    "permissions": ["storage", "declarativeNetRequest"],
+    "permissions": ["storage", "declarativeNetRequest", "cookies"],
+
     "action": {
         "default_popup": "index.html"
     },

@@ -1,1 +1,7 @@
-<app-project-selection></app-project-selection>
+{{ vm$ | async | json }}
+<ng-template *ngIf="vm$ | async as vm">
+    <app-project-selection
+        [projects]="vm.projects"
+        (selectedProject)="selectProject($event)"
+    ></app-project-selection>
+</ng-template>

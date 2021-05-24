@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 
 export interface IProjectInfo {
@@ -14,7 +15,7 @@ export interface IProjectInfo {
     providedIn: 'root',
 })
 export class ProjectService {
-    private projectUrl = 'https://jira.1800contacts.com/rest/api/2/project';
+    private projectUrl$ = this.auth.url$.pipe(map((x) => x + 'rest/api/2/project'));
     private projectBS: BehaviorSubject<IProjectInfo> = new BehaviorSubject(null);
     private projectCookieKey = '6cbbfa32-e2f1-4694-861e-1edf3c9a1a2b';
     private projectInfo: IProjectInfo;
@@ -26,7 +27,21 @@ export class ProjectService {
             this.projectBS.next(this.projectInfo);
         }
     }
-    public getProjects(): Observable<IProjectInfo[]> {
-        return this.http.get<IProjectInfo[]>(this.projectUrl + '?recent=5');
+
+    public getProjects() {
+        return this.projectUrl$.pipe(
+            take(1),
+            switchMap((x) => this.http.get<IProjectInfo[]>(x + '?recent=5'))
+        );
+    }
+
+    public setProject(project: IProjectInfo): void {
+        this.projectBS.next(project);
+        window.localStorage.setItem(this.projectCookieKey, JSON.stringify(project));
+    }
+
+    public deleteProject(): void {
+        this.projectBS.next(null);
+        window.localStorage.removeItem(this.projectCookieKey);
     }
 }

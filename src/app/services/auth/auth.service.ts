@@ -1,61 +1,95 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { ILoginResponse } from './ILoginResponse';
+import { BehaviorSubject, bindCallback, Observable, of } from 'rxjs';
+import {
+    distinctUntilChanged,
+    filter,
+    map,
+    shareReplay,
+    switchMap,
+    switchMapTo,
+    take,
+    tap,
+} from 'rxjs/operators';
+
+// @ts-ignore
+const browser = chrome;
+
+export interface ICookie {
+    name: string;
+    value: string;
+}
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
-    private isSignedInBS = new BehaviorSubject(false);
-    public isSignedIn$: Observable<boolean> = this.isSignedInBS.asObservable();
-    private sessionName: string;
-    private sessionValue: string;
-    private sessionNameKey = '60d83deb-47d8-4f64-b02e-426d151cc3e6';
-    private authUrl = 'https://jira.1800contacts.com/rest/auth/1/session';
-    constructor(private readonly httpClient: HttpClient) {
-        this.sessionName = window.localStorage.getItem(this.sessionNameKey);
-        console.log(this.sessionName);
-        if (this.sessionName) {
-            this.sessionValue = window.localStorage.getItem(this.sessionName);
-            this.isSignedInBS.next(true);
+    private url$$ = new BehaviorSubject<string>(null);
+    private sessionValue$$ = new BehaviorSubject<string>(null);
+    public isSignedIn$: Observable<boolean> = this.sessionValue$$.pipe(map((x) => !!x));
+    public url$: Observable<string> = this.url$$.pipe(shareReplay(1));
+    private urlKey = '0b49dde5-f271-49ae-9bc3-f6454210d1e5';
+    private authUrl$ = this.url$$.pipe(
+        filter((x) => !!x),
+        map((x) => x + 'rest/auth/1/session')
+    );
+    constructor(private readonly httpClient: HttpClient) {}
+
+    public signInOnStart(): Observable<ICookie> {
+        const url = window.localStorage.getItem(this.urlKey);
+        if (!url) {
+            return of(null);
         }
+        return this.getJiraCredentials(url);
     }
 
-    public signIn(username: string, password: string) {
-        let requestHeaders = { headers: { ['content-type']: 'application/json' } };
-        this.httpClient
-            .post(this.authUrl, { username: username, password: password }, requestHeaders)
-            .pipe(take(1))
-            .subscribe((response: ILoginResponse) => {
-                console.log(response);
-                this.sessionName = response.session.name;
-                this.sessionValue = response.session.value;
-                window.localStorage.setItem(this.sessionNameKey, this.sessionName);
-                window.localStorage.setItem(this.sessionName, this.sessionValue);
-                this.isSignedInBS.next(true);
-            });
+    public checkAuthStatus(): Observable<boolean> {
+        return this.authUrl$.pipe(
+            switchMap((x) => {
+                if (!x) return of(null);
+                return this.httpClient.get(x);
+            }),
+            map((x) => !!x['session'])
+        );
     }
 
-    public signOut() {
-        const header = this.getCookieHeader();
-        this.httpClient
-            .delete(this.authUrl)
-            .pipe(take(1))
-            .subscribe((response) => {
-                console.log(response);
-                window.localStorage.removeItem(this.sessionName);
-                window.localStorage.removeItem(this.sessionNameKey);
-                this.sessionValue = undefined;
-                this.sessionName = undefined;
-                this.isSignedInBS.next(false);
-            });
-    }
-
-    public getCookieHeader(): string {
-        if (this.isSignedInBS.value) {
-            return `${this.sessionName}=${this.sessionValue}`;
+    public getJiraCredentials(url: string): Observable<ICookie> {
+        if (!url) {
+            return of(null);
         }
+        return this.getAuthCookieFromChrome(url).pipe(
+            take(1),
+            tap((x: ICookie) => {
+                if (x) {
+                    this.url$$.next(url);
+                    window.localStorage.setItem(this.urlKey, url);
+                    this.sessionValue$$.next(x.value);
+                }
+            })
+        );
+    }
+
+    public signOut(): Observable<any> {
+        return this.authUrl$.pipe(
+            switchMap((x) => this.httpClient.delete(x)),
+            take(1),
+            tap(() => {
+                this.sessionValue$$.next(null);
+            })
+        );
+    }
+
+    public getCookieHeader(): Observable<string> {
+        return this.sessionValue$$.pipe(
+            filter((x) => !!x),
+            map((x) => `JSESSIONID=${x}`)
+        );
+    }
+    private getAuthCookieFromChrome(url: string): Observable<ICookie> {
+        if (!url) {
+            return of(null);
+        }
+        const getCookie: (details: any) => Observable<any> = bindCallback(browser.cookies.get);
+        return getCookie({ name: 'JSESSIONID', url: url }) as Observable<ICookie>;
     }
 }

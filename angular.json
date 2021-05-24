@@ -5,11 +5,7 @@
     "projects": {
         "JiraServerAssistant": {
             "projectType": "application",
-            "schematics": {
-                "@schematics/angular:component": {
-                    "style": "sass"
-                }
-            },
+            "schematics": { "@schematics/angular:component": { "style": "sass" } },
             "root": "",
             "sourceRoot": "src",
             "prefix": "app",
@@ -23,8 +19,7 @@
                         "polyfills": "src/polyfills.ts",
                         "tsConfig": "tsconfig.app.json",
                         "assets": ["src/favicon.ico", "src/assets", "src/manifest.json"],
-                        "styles": ["src/styles.sass", "node_modules/bootstrap/dist/css/bootstrap.min.css"],
-                        "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"],
+                        "styles": ["src/styles.sass"],
                         "aot": true
                     },
                     "configurations": {
@@ -37,7 +32,7 @@
                             ],
                             "optimization": true,
                             "outputHashing": "all",
-                            "sourceMap": false,
+                            "sourceMap": true,
                             "extractCss": true,
                             "namedChunks": false,
                             "extractLicenses": true,
@@ -60,20 +55,14 @@
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
-                    "options": {
-                        "browserTarget": "JiraServerAssistant:build"
-                    },
+                    "options": { "browserTarget": "JiraServerAssistant:build" },
                     "configurations": {
-                        "production": {
-                            "browserTarget": "JiraServerAssistant:build:production"
-                        }
+                        "production": { "browserTarget": "JiraServerAssistant:build:production" }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
-                    "options": {
-                        "browserTarget": "JiraServerAssistant:build"
-                    }
+                    "options": { "browserTarget": "JiraServerAssistant:build" }
                 },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
@@ -91,7 +80,11 @@
                 "lint": {
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
-                        "tsConfig": ["tsconfig.app.json", "tsconfig.spec.json", "e2e/tsconfig.json"],
+                        "tsConfig": [
+                            "tsconfig.app.json",
+                            "tsconfig.spec.json",
+                            "e2e/tsconfig.json"
+                        ],
                         "exclude": ["**/node_modules/**"]
                     }
                 },
@@ -102,9 +95,7 @@
                         "devServerTarget": "JiraServerAssistant:serve"
                     },
                     "configurations": {
-                        "production": {
-                            "devServerTarget": "JiraServerAssistant:serve:production"
-                        }
+                        "production": { "devServerTarget": "JiraServerAssistant:serve:production" }
                     }
                 }
             }

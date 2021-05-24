@@ -11,7 +11,10 @@
         "moduleResolution": "node",
         "importHelpers": true,
         "target": "es5",
-        "lib": ["es2018", "dom"]
+        "lib": ["es2018", "dom"],
+        "paths": {
+            "@app/*": ["src/app/*"]
+        }
     },
     "typeAcquisition": { "enable": true },
     "angularCompilerOptions": {
