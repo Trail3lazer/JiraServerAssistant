@@ -1,6 +1,6 @@
 <form [formGroup]="projectForm" (submit)="submit($event)">
     <h2>Please select a project to work in</h2>
-    <div class="form-check mb-2" *ngFor="let project of projects; trackBy: trackByProjectId">
+    <div class="form-check mb-2" *ngFor="let project of vm.projects; trackBy: trackByProjectId">
         <input
             formControlName="projectControl"
             class="form-check-input"

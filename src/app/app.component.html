@@ -1,7 +1,8 @@
-<app-header></app-header>
-<div class="container">
-    <app-main *ngIf="vm$ | async; else login"></app-main>
-    <ng-template #login>
-        <app-login></app-login>
-    </ng-template>
-</div>
+<ng-container *ngIf="vm$ | async as vm">
+    <app-header [vm]="vm"></app-header>
+    <div [ngSwitch]="vm.flowState" class="container">
+        <app-login *ngSwitchCase="'login'"></app-login>
+        <app-project-selection *ngSwitchCase="'project'" [vm]="vm"></app-project-selection>
+        <app-issues *ngSwitchCase="'issues'" [vm]="vm"></app-issues>
+    </div>
+</ng-container>

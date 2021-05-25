@@ -1,24 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, bindCallback, Observable, of } from 'rxjs';
+import { BehaviorSubject, bindCallback, from, Observable, of } from 'rxjs';
 import {
-    distinctUntilChanged,
     filter,
     map,
     shareReplay,
+    startWith,
     switchMap,
     switchMapTo,
     take,
     tap,
 } from 'rxjs/operators';
-
-// @ts-ignore
-const browser = chrome;
-
-export interface ICookie {
-    name: string;
-    value: string;
-}
+import { ICookie, StorageService } from '../storage/storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -26,22 +19,20 @@ export interface ICookie {
 export class AuthService {
     private url$$ = new BehaviorSubject<string>(null);
     private sessionValue$$ = new BehaviorSubject<string>(null);
-    public isSignedIn$: Observable<boolean> = this.sessionValue$$.pipe(map((x) => !!x));
-    public url$: Observable<string> = this.url$$.pipe(shareReplay(1));
+    public isSignedIn$: Observable<boolean> = this.signInOnStart().pipe(
+        switchMapTo(this.sessionValue$$),
+        map((x) => !!x)
+    );
+    public url$: Observable<string> = this.url$$.pipe(filter((x) => !!x));
     private urlKey = '0b49dde5-f271-49ae-9bc3-f6454210d1e5';
     private authUrl$ = this.url$$.pipe(
         filter((x) => !!x),
         map((x) => x + 'rest/auth/1/session')
     );
-    constructor(private readonly httpClient: HttpClient) {}
-
-    public signInOnStart(): Observable<ICookie> {
-        const url = window.localStorage.getItem(this.urlKey);
-        if (!url) {
-            return of(null);
-        }
-        return this.getJiraCredentials(url);
-    }
+    constructor(
+        private readonly httpClient: HttpClient,
+        private readonly storageService: StorageService
+    ) {}
 
     public checkAuthStatus(): Observable<boolean> {
         return this.authUrl$.pipe(
@@ -53,20 +44,25 @@ export class AuthService {
         );
     }
 
-    public getJiraCredentials(url: string): Observable<ICookie> {
+    public getJiraCredentials(url: string): Observable<void> {
         if (!url) {
             return of(null);
         }
-        return this.getAuthCookieFromChrome(url).pipe(
-            take(1),
-            tap((x: ICookie) => {
-                if (x) {
-                    this.url$$.next(url);
-                    window.localStorage.setItem(this.urlKey, url);
-                    this.sessionValue$$.next(x.value);
-                }
+        return this.storageService
+            .getCookie$({
+                name: 'JSESSIONID',
+                url: url,
             })
-        );
+            .pipe(
+                take(1),
+                tap((x: ICookie) => {
+                    if (x) {
+                        this.url$$.next(url);
+                        this.sessionValue$$.next(x.value);
+                    }
+                }),
+                switchMap(() => this.storageService.setStorage$({ [this.urlKey]: url }))
+            );
     }
 
     public signOut(): Observable<any> {
@@ -85,11 +81,14 @@ export class AuthService {
             map((x) => `JSESSIONID=${x}`)
         );
     }
-    private getAuthCookieFromChrome(url: string): Observable<ICookie> {
-        if (!url) {
-            return of(null);
-        }
-        const getCookie: (details: any) => Observable<any> = bindCallback(browser.cookies.get);
-        return getCookie({ name: 'JSESSIONID', url: url }) as Observable<ICookie>;
+
+    private signInOnStart(): Observable<ICookie> {
+        return this.storageService.getStorage$().pipe(
+            switchMap((x) => {
+                const url = x[this.urlKey];
+                if (!url) return of(null);
+                return this.getJiraCredentials(url);
+            })
+        );
     }
 }

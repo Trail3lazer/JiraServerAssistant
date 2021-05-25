@@ -1,15 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { combineLatest, Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
-import { map, shareReplay, switchMap, take } from 'rxjs/operators';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
-
-export interface IProjectInfo {
-    url: string;
-    id: number;
-    key: string;
-    name: string;
-}
+import { IIssueType } from '../issue/issue.service';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable({
     providedIn: 'root',
@@ -18,30 +14,54 @@ export class ProjectService {
     private projectUrl$ = this.auth.url$.pipe(map((x) => x + 'rest/api/2/project'));
     private projectBS: BehaviorSubject<IProjectInfo> = new BehaviorSubject(null);
     private projectCookieKey = '6cbbfa32-e2f1-4694-861e-1edf3c9a1a2b';
-    private projectInfo: IProjectInfo;
     public project$ = this.projectBS.asObservable();
-    constructor(private readonly http: HttpClient, private readonly auth: AuthService) {
-        const jsonProject = window.localStorage.getItem(this.projectCookieKey);
-        if (jsonProject) {
-            this.projectInfo = JSON.parse(jsonProject);
-            this.projectBS.next(this.projectInfo);
-        }
+    public availableProjects$ = this.projectUrl$.pipe(
+        switchMap((x) => this.http.get<IProjectInfo[]>(x + '?recent=5'))
+    );
+    public projectStatuses$ = combineLatest([this.project$, this.projectUrl$]).pipe(
+        filter(([project, url]) => !!project?.key && !!url),
+        switchMap(([project, url]) => this.http.get<IIssueType[]>(`${url}/${project.key}/statuses`))
+    );
+
+    constructor(
+        private readonly http: HttpClient,
+        private readonly auth: AuthService,
+        private readonly storageService: StorageService
+    ) {
+        const jsonProject = this.storageService
+            .getStorage$()
+            .pipe(take(1))
+            .subscribe((storage) => {
+                const x = storage[this.projectCookieKey];
+                if (x) {
+                    this.projectBS.next(JSON.parse(x));
+                }
+            });
     }
 
-    public getProjects() {
-        return this.projectUrl$.pipe(
-            take(1),
-            switchMap((x) => this.http.get<IProjectInfo[]>(x + '?recent=5'))
-        );
-    }
-
-    public setProject(project: IProjectInfo): void {
+    public setProject(project: IProjectInfo): Observable<void> {
         this.projectBS.next(project);
-        window.localStorage.setItem(this.projectCookieKey, JSON.stringify(project));
+        return this.storageService.setStorage$({
+            [this.projectCookieKey]: JSON.stringify(project),
+        });
     }
 
-    public deleteProject(): void {
+    public deleteProject(): Observable<void> {
         this.projectBS.next(null);
-        window.localStorage.removeItem(this.projectCookieKey);
+        return this.storageService.deleteStorage$([this.projectCookieKey]);
     }
+}
+
+export interface IProjectInfo {
+    url: string;
+    id: number;
+    key: string;
+    name: string;
+}
+
+export interface ISearchRequest {
+    jql: string;
+    startAt: number;
+    maxResults: number;
+    fields: string[];
 }

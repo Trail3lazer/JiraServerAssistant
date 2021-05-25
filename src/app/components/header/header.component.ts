@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -6,14 +6,10 @@ import { AuthService } from 'src/app/services/auth/auth.service';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.sass'],
 })
-export class HeaderComponent implements OnInit {
-    public isSignedIn$ = this.authService.isSignedIn$;
+export class HeaderComponent {
+    @Input() vm;
     constructor(private readonly authService: AuthService) {}
-    ngOnInit(): void {}
-
     public signOut() {
         this.authService.signOut();
     }
-
-    public click(): void {}
 }

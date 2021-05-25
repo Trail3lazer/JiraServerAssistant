@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TrackByFunction } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IProjectInfo } from 'src/app/services/project/project.service';
+import { VM } from '@app/app.component';
+import { IProjectInfo, ProjectService } from 'src/app/services/project/project.service';
 
 @Component({
     selector: 'app-project-selection',
@@ -8,24 +9,24 @@ import { IProjectInfo } from 'src/app/services/project/project.service';
     styleUrls: ['./project-selection.component.sass'],
 })
 export class ProjectSelectionComponent {
-    @Input() projects: IProjectInfo[];
-    @Output() selectedProject = new EventEmitter<IProjectInfo>();
-
+    @Input() vm: VM;
     public projectForm: FormGroup;
     public get projectControl() {
         return this.projectForm.get('projectControl');
     }
+    constructor(private readonly projectService: ProjectService) {}
     ngOnInit(): void {
         this.projectForm = new FormGroup({
             projectControl: new FormControl(),
         });
     }
 
-    public trackByProjectId(project: IProjectInfo) {
-        return project.id;
-    }
+    public trackByProjectId: TrackByFunction<IProjectInfo> = (idx, item) => {
+        return item.id;
+    };
+
     public submit(event: any): void {
         event.preventDefault();
-        this.selectedProject.emit(this.projectControl.value);
+        this.projectService.setProject(this.projectControl.value);
     }
 }
