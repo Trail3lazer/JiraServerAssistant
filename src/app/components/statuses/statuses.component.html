@@ -1,0 +1,12 @@
+<form *ngIf="!vm.statusesHidden" [formGroup]="statusForm">
+    <span *ngFor="let x of statusControls; trackById" class="me-2 mb-2 badge bg-light text-dark">
+        <input
+            [formControl]="x.control"
+            type="checkbox"
+            [name]="x.status.name"
+            [value]="x"
+            class="me-1"
+        />
+        <label [for]="x.status.name">{{ x.status.name }}</label>
+    </span>
+</form>

@@ -8,10 +8,18 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProjectSelectionComponent } from './components/project-selection/project-selection.component';
 import { HttpRequestInterceptor } from './HttpAuthInterceptor';
-import { IssuesComponent } from './components/issues/issues.component';
+import { StatusesComponent } from './components/statuses/statuses.component';
+import { PendingComponent } from './components/pending/pending.component';
 
 @NgModule({
-    declarations: [AppComponent, HeaderComponent, LoginComponent, ProjectSelectionComponent, IssuesComponent],
+    declarations: [
+        AppComponent,
+        HeaderComponent,
+        LoginComponent,
+        ProjectSelectionComponent,
+        StatusesComponent,
+        PendingComponent,
+    ],
     imports: [BrowserModule, HttpClientModule, FormsModule, ReactiveFormsModule],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

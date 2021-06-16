@@ -36,7 +36,7 @@ export class AuthService {
 
     public checkAuthStatus(): Observable<boolean> {
         return this.authUrl$.pipe(
-            switchMap((x) => {
+            switchMap((x: string) => {
                 if (!x) return of(null);
                 return this.httpClient.get(x);
             }),
@@ -67,7 +67,7 @@ export class AuthService {
 
     public signOut(): Observable<any> {
         return this.authUrl$.pipe(
-            switchMap((x) => this.httpClient.delete(x)),
+            switchMap((x: string) => this.httpClient.delete(x)),
             take(1),
             tap(() => {
                 this.sessionValue$$.next(null);
@@ -82,7 +82,7 @@ export class AuthService {
         );
     }
 
-    private signInOnStart(): Observable<ICookie> {
+    private signInOnStart(): Observable<void> {
         return this.storageService.getStorage$().pipe(
             switchMap((x) => {
                 const url = x[this.urlKey];

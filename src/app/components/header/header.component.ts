@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { VM } from '@app/app.component';
+import { StatusService } from '@app/services/status/status.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
@@ -6,10 +8,25 @@ import { AuthService } from 'src/app/services/auth/auth.service';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.sass'],
 })
-export class HeaderComponent {
-    @Input() vm;
-    constructor(private readonly authService: AuthService) {}
+export class HeaderComponent implements OnChanges {
+    @Input() vm: VM;
+    public selectedStatuses: string[];
+    constructor(
+        private readonly authService: AuthService,
+        private readonly statusService: StatusService
+    ) {}
+    public ngOnChanges() {
+        this.selectedStatuses = this.vm.statuses.reduce((arr, cur) => {
+            if (cur.isSelected) {
+                arr.push(cur.name);
+            }
+            return arr;
+        }, []);
+    }
     public signOut() {
         this.authService.signOut();
+    }
+    public toggleStatuses() {
+        this.statusService.toggleStatusShown();
     }
 }

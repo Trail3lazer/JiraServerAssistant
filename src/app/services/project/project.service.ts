@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import flatten from 'lodash-es/flatten';
 import { combineLatest, Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
-import { IIssueType } from '../issue/issue.service';
+import { IIssueType, IStatus } from '../status/status.service';
 import { StorageService } from '../storage/storage.service';
 
 @Injectable({
@@ -18,7 +19,7 @@ export class ProjectService {
     public availableProjects$ = this.projectUrl$.pipe(
         switchMap((x) => this.http.get<IProjectInfo[]>(x + '?recent=5'))
     );
-    public projectStatuses$ = combineLatest([this.project$, this.projectUrl$]).pipe(
+    public issueTypes$ = combineLatest([this.project$, this.projectUrl$]).pipe(
         filter(([project, url]) => !!project?.key && !!url),
         switchMap(([project, url]) => this.http.get<IIssueType[]>(`${url}/${project.key}/statuses`))
     );
@@ -57,11 +58,4 @@ export interface IProjectInfo {
     id: number;
     key: string;
     name: string;
-}
-
-export interface ISearchRequest {
-    jql: string;
-    startAt: number;
-    maxResults: number;
-    fields: string[];
 }
