@@ -6,15 +6,21 @@
 .bg-primary 
     background-color: #0099ff
 html
-    width: 500px
-    animation: redraw 1s linear infinite
+  width: 500px
+    
+  @media ( max-width: 800px )
+    width: 800px    
+body
+  max-width: 100%
+  overflow: hidden
+//     animation: redraw 1s linear infinite
 
-@keyframes redraw 
-  0% 
-    opacity: 1
+// @keyframes redraw 
+//   0% 
+//     opacity: 1
   
-  100% 
-    opacity: .99
+//   100% 
+//     opacity: .99
           
         
       

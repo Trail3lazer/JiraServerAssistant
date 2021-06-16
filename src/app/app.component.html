@@ -4,6 +4,9 @@
         <app-pending *ngSwitchCase="'loading'"></app-pending>
         <app-login *ngSwitchCase="'login'"></app-login>
         <app-project-selection *ngSwitchCase="'project'" [vm]="vm"></app-project-selection>
-        <app-statuses *ngSwitchCase="'issues'" [vm]="vm"></app-statuses>
+        <div *ngSwitchCase="'issues'">
+            <app-statuses [vm]="vm"></app-statuses>
+            <app-issue [vm]="vm"></app-issue>
+        </div>
     </div>
 </ng-container>

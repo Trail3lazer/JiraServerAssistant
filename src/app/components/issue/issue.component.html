@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col" *ngFor="let col of vm.issues">
+        <h2>{{ col.status }}</h2>
+        <div *ngFor="let issue of col.issues" class="card">
+            <div class="card-body">
+                <p class="card-text truncate">{{ issue.fields.summary }}</p>
+                <div class="d-flex justify-content-between">
+                    <img
+                        *ngIf="issue.fields.assignee; else unassigned"
+                        class="rounded"
+                        [src]="issue.fields.assignee.avatarUrls['32x32']"
+                        [alt]="issue.fields.assignee.displayName"
+                    />
+                    <ng-template #unassigned>
+                        <img
+                            class="rounded"
+                            src="https://img.icons8.com/pastel-glyph/2x/person-male--v2.png"
+                            alt="Unassigned"
+                        />
+                    </ng-template>
+                    <img
+                        *ngIf="issue.fields.priority"
+                        class="rounded mt-auto priority"
+                        [src]="issue.fields.priority.iconUrl"
+                        [alt]="issue.fields.priority.name"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
