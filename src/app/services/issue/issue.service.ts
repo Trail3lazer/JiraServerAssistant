@@ -22,10 +22,9 @@ export class IssueService {
     ) {}
 
     private fieldsKey = '170227b0-01d8-4633-94d2-cb991d021393';
-    private url$ = this.authService.url$.pipe(
-        filter((x) => !!x),
-        map((x) => x + 'rest/api/2/search')
-    );
+    private url$ = this.authService.url$.pipe(map((x) => x + 'rest/api/2/search'));
+    private issueUrl$ = this.authService.url$.pipe(map((x) => x + 'rest/api/2/issue/'));
+
     private fields$$: BehaviorSubject<string[]> = new BehaviorSubject([]);
     private savedFields$ = this.fields$$.pipe(
         debounceTime(200),
@@ -92,25 +91,18 @@ export class IssueService {
         );
     }
 
-    private getIssuesByStatus(
-        status: IStatus,
-        fields: string[],
-        type: IIssueType[],
-        project: IProjectInfo
-    ): Observable<IIssueResponse> {
-        return this.url$.pipe(
-            switchMap((url: string) => {
-                const typeNames = type.map((x) => x.name).join('", "');
-                const body: ISearchRequest = {
-                    jql: `type in ("${typeNames}") AND project = "${project.name}" AND status = "${status.name}" order by lastViewed DESC`,
-                    startAt: 0,
-                    maxResults: 25,
-                    fields: fields,
-                };
-                return this.http.post<IIssueResponse>(url, body);
-            })
+    public getTransitions(issue: IIssue): Observable<ITransition[]> {
+        return this.issueUrl$.pipe(
+            switchMap((url: string) => this.http.get(url + issue.id + '/transitions')),
+            map((x: { transitions: ITransition[] }) => x.transitions)
         );
     }
+}
+
+interface ITransitionRequest {
+    transition: {
+        id: number;
+    };
 }
 
 interface ISearchRequest {
@@ -129,7 +121,7 @@ export interface IIssueResponse {
     status: string;
 }
 
-interface ITransition {
+export interface ITransition {
     id: string;
     name: string;
     to: {

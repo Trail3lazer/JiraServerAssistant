@@ -1,16 +1,21 @@
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
-import { IIssue } from '@app/services/issue/issue.service';
+import { Component, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { IIssue, IssueService, ITransition } from '@app/services/issue/issue.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-issue',
     templateUrl: './issue.component.html',
     styleUrls: ['./issue.component.sass'],
 })
-export class IssueComponent {
+export class IssueComponent implements OnInit {
     @Input() issue: IIssue;
     @ViewChild('issueRef') issueRef;
     public dropdownHidden = true;
-    constructor(private ref: ElementRef) {}
+    public transitions$: Observable<ITransition[]>;
+    constructor(private readonly issueService: IssueService) {}
+    public ngOnInit() {
+        this.transitions$ = this.issueService.getTransitions(this.issue);
+    }
 
     @HostListener('document:click', ['$event'])
     public hideDropdown(event: any) {

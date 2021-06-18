@@ -23,13 +23,14 @@
             />
         </div>
     </div>
-    <div *ngIf="!dropdownHidden" class="context-menu">
+    <div *ngIf="!dropdownHidden && transitions$ | async as transitions" class="context-menu">
         <div class="list-group">
-            <div class="list-group-item list-group-item-action">The current link item</div>
-            <div class="list-group-item list-group-item-action">A second link item</div>
-            <div class="list-group-item list-group-item-action">A third link item</div>
-            <div class="list-group-item list-group-item-action">A fourth link item</div>
-            <div class="list-group-item list-group-item-action">A disabled link item</div>
+            <div
+                *ngFor="let transition of transitions"
+                class="list-group-item list-group-item-action"
+            >
+                <span class="icon-login"></span> {{ transition.to.name }}
+            </div>
         </div>
     </div>
 </div>
