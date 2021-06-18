@@ -147,13 +147,13 @@ interface ITransition {
     };
 }
 
-interface IIssue {
+export interface IIssue {
     expand: string;
     id: string;
     self: string;
     key: string;
     fields: {
-        [key: string]: {};
+        [key: string]: any;
     };
     renderedFields: {
         [key: string]: {};

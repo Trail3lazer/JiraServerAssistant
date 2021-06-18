@@ -1,0 +1,10 @@
+<div class="row">
+    <div class="col" *ngFor="let col of vm.issues">
+        <h2>{{ col.status }}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col" *ngFor="let col of vm.issues">
+        <app-issue *ngFor="let issue of col.issues" [issue]="issue"></app-issue>
+    </div>
+</div>

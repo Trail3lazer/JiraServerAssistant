@@ -11,6 +11,7 @@ import { HttpRequestInterceptor } from './HttpAuthInterceptor';
 import { StatusesComponent } from './components/statuses/statuses.component';
 import { PendingComponent } from './components/pending/pending.component';
 import { IssueComponent } from './components/issue/issue.component';
+import { StatusComponent } from './components/status/status.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { IssueComponent } from './components/issue/issue.component';
         StatusesComponent,
         PendingComponent,
         IssueComponent,
+        StatusComponent,
     ],
     imports: [BrowserModule, HttpClientModule, FormsModule, ReactiveFormsModule],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }],

@@ -1,12 +1,12 @@
-<ng-container *ngIf="vm$ | async as vm">
+<div *ngIf="vm$ | async as vm">
     <app-header [vm]="vm"></app-header>
-    <div [ngSwitch]="vm.flowState" class="container">
+    <div [ngSwitch]="vm.flowState" class="mx-3">
         <app-pending *ngSwitchCase="'loading'"></app-pending>
         <app-login *ngSwitchCase="'login'"></app-login>
         <app-project-selection *ngSwitchCase="'project'" [vm]="vm"></app-project-selection>
         <div *ngSwitchCase="'issues'">
             <app-statuses [vm]="vm"></app-statuses>
-            <app-issue [vm]="vm"></app-issue>
+            <app-status [vm]="vm"></app-status>
         </div>
     </div>
-</ng-container>
+</div>
