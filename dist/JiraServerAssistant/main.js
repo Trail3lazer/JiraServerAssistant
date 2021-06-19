@@ -34,7 +34,9 @@ function IssueComponent_img_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("src", ctx_r4.issue.fields.priority.iconUrl, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"])("alt", ctx_r4.issue.fields.priority.name);
 } }
 function IssueComponent_div_10_div_2_Template(rf, ctx) { if (rf & 1) {
+    var _r10 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function IssueComponent_div_10_div_2_Template_div_click_0_listener() { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r10); var transition_r8 = ctx.$implicit; var ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r9.doTransition(transition_r8); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](1, "span", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -70,6 +72,9 @@ var IssueComponent = /** @class */ (function () {
             this.dropdownHidden = true;
         }
     };
+    IssueComponent.prototype.doTransition = function (transition) {
+        this.issueService.transition(transition, this.issue.id).subscribe();
+    };
     IssueComponent.ɵfac = function IssueComponent_Factory(t) { return new (t || IssueComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_app_services_issue_issue_service__WEBPACK_IMPORTED_MODULE_1__["IssueService"])); };
     IssueComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: IssueComponent, selectors: [["app-issue"]], viewQuery: function IssueComponent_Query(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_c0, true);
@@ -78,7 +83,7 @@ var IssueComponent = /** @class */ (function () {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.issueRef = _t.first);
         } }, hostBindings: function IssueComponent_HostBindings(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function IssueComponent_click_HostBindingHandler($event) { return ctx.hideDropdown($event); }, false, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵresolveDocument"]);
-        } }, inputs: { issue: "issue" }, decls: 12, vars: 7, consts: [["issueRef", ""], [1, "card", "card-body"], [1, "card-text", "truncate"], [1, "d-flex", "justify-content-between"], ["class", "rounded", 3, "src", "alt", 4, "ngIf", "ngIfElse"], ["unassigned", ""], ["class", "rounded mt-auto priority", 3, "src", "alt", 4, "ngIf"], ["class", "context-menu", 4, "ngIf"], [1, "rounded", 3, "src", "alt"], ["src", "https://img.icons8.com/pastel-glyph/2x/person-male--v2.png", "alt", "Unassigned", 1, "rounded"], [1, "rounded", "mt-auto", "priority", 3, "src", "alt"], [1, "context-menu"], [1, "list-group"], ["class", "list-group-item list-group-item-action", 4, "ngFor", "ngForOf"], [1, "list-group-item", "list-group-item-action"], [1, "icon-login"]], template: function IssueComponent_Template(rf, ctx) { if (rf & 1) {
+        } }, inputs: { issue: "issue" }, decls: 12, vars: 7, consts: [["issueRef", ""], [1, "card", "card-body"], [1, "card-text", "truncate"], [1, "d-flex", "justify-content-between"], ["class", "rounded", 3, "src", "alt", 4, "ngIf", "ngIfElse"], ["unassigned", ""], ["class", "rounded mt-auto priority", 3, "src", "alt", 4, "ngIf"], ["class", "context-menu", 4, "ngIf"], [1, "rounded", 3, "src", "alt"], ["src", "https://img.icons8.com/pastel-glyph/2x/person-male--v2.png", "alt", "Unassigned", 1, "rounded"], [1, "rounded", "mt-auto", "priority", 3, "src", "alt"], [1, "context-menu"], [1, "list-group"], ["class", "list-group-item list-group-item-action", 3, "click", 4, "ngFor", "ngForOf"], [1, "list-group-item", "list-group-item-action", 3, "click"], [1, "icon-login"]], template: function IssueComponent_Template(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", null, 0);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "div", 1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "p", 2);
@@ -918,21 +923,18 @@ var IssueService = /** @class */ (function () {
         this.http = http;
         this.storageService = storageService;
         this.statusService = statusService;
+        this.refreshIssues$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](null);
         this.defaultFields = [Fields.Priority, Fields.Assignee, Fields.Summary];
         this.fieldsKey = '170227b0-01d8-4633-94d2-cb991d021393';
         this.url$ = this.authService.url$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (x) { return x + 'rest/api/2/search'; }));
         this.issueUrl$ = this.authService.url$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (x) { return x + 'rest/api/2/issue/'; }));
-        this.fields$$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"]([]);
-        this.savedFields$ = this.fields$$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["debounceTime"])(200), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function (x) { return _this.saveFields(x); }));
-        this.fields$ = this.getFields(); //.pipe(
-        //switchMap((x: string[]) => this.addFields(x)),
-        //switchMapTo(this.savedFields$)
-        // );
+        this.fields$ = this.getFields();
         this.issues$ = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])([
             this.statusService.selectedStatuses$,
             this.projectService.project$,
             this.fields$,
             this.url$,
+            this.refreshIssues$,
         ]).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function (_a) {
             var e_1, _b;
             var _c = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__read"])(_a, 4), statuses = _c[0], project = _c[1], fields = _c[2], url = _c[3];
@@ -964,25 +966,6 @@ var IssueService = /** @class */ (function () {
             return Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["forkJoin"])(issues);
         }));
     }
-    IssueService.prototype.removeFields = function (fieldNames) {
-        var _this = this;
-        return this.fields$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (old) {
-            var newFields = old.filter(function (oldField) { return !fieldNames.includes(oldField); });
-            _this.fields$$.next(newFields);
-            return newFields;
-        }));
-    };
-    IssueService.prototype.addFields = function (fieldNames) {
-        var _this = this;
-        return this.fields$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (x) { return _this.fields$$.next(fieldNames.concat(x)); }));
-    };
-    IssueService.prototype.saveFields = function (fieldNames) {
-        var _a;
-        var validated = fieldNames.filter(function (x) { return !!x; });
-        return this.storageService
-            .setStorage$((_a = {}, _a[this.fieldsKey] = validated, _a))
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mapTo"])(validated));
-    };
     IssueService.prototype.getFields = function () {
         var _this = this;
         return this.storageService.getStorage$().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (x) {
@@ -993,6 +976,22 @@ var IssueService = /** @class */ (function () {
     IssueService.prototype.getTransitions = function (issue) {
         var _this = this;
         return this.issueUrl$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function (url) { return _this.http.get(url + issue.id + '/transitions'); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (x) { return x.transitions; }));
+    };
+    IssueService.prototype.transition = function (transition, issueId) {
+        var _this = this;
+        var request = {
+            transition: {
+                id: transition.id,
+            },
+            fields: transition.to.name === 'Closed' || transition.to.name === 'Done'
+                ? {
+                    resolution: { name: transition.to.statusCategory.name },
+                }
+                : null,
+        };
+        return this.issueUrl$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function (url) {
+            return _this.http.post(url + issueId + '/transitions', request);
+        }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function () { return _this.refreshIssues$.next(null); }));
     };
     IssueService.ɵfac = function IssueService_Factory(t) { return new (t || IssueService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_project_project_service__WEBPACK_IMPORTED_MODULE_4__["ProjectService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_auth_auth_service__WEBPACK_IMPORTED_MODULE_5__["AuthService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_6__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_storage_storage_service__WEBPACK_IMPORTED_MODULE_7__["StorageService"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_status_status_service__WEBPACK_IMPORTED_MODULE_8__["StatusService"])); };
     IssueService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: IssueService, factory: IssueService.ɵfac, providedIn: 'root' });

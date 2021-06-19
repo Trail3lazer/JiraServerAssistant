@@ -25,4 +25,7 @@ export class IssueComponent implements OnInit {
             this.dropdownHidden = true;
         }
     }
+    public doTransition(transition: ITransition): void {
+        this.issueService.transition(transition, this.issue.id).subscribe();
+    }
 }

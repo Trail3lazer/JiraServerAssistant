@@ -2,16 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { Observable, forkJoin } from 'rxjs';
-import { debounceTime, filter, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
+import { map, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
-import { IProjectInfo, ProjectService } from '../project/project.service';
-import { IIssueType, IStatus, StatusService } from '../status/status.service';
+import { ProjectService } from '../project/project.service';
+import { StatusService } from '../status/status.service';
 import { StorageService } from '../storage/storage.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class IssueService {
+    private refreshIssues$ = new BehaviorSubject(null);
     private defaultFields = [Fields.Priority, Fields.Assignee, Fields.Summary];
     constructor(
         private readonly projectService: ProjectService,
@@ -22,24 +23,21 @@ export class IssueService {
     ) {}
 
     private fieldsKey = '170227b0-01d8-4633-94d2-cb991d021393';
-    private url$ = this.authService.url$.pipe(map((x) => x + 'rest/api/2/search'));
-    private issueUrl$ = this.authService.url$.pipe(map((x) => x + 'rest/api/2/issue/'));
-
-    private fields$$: BehaviorSubject<string[]> = new BehaviorSubject([]);
-    private savedFields$ = this.fields$$.pipe(
-        debounceTime(200),
-        switchMap((x: string[]) => this.saveFields(x))
+    private url$: Observable<string> = this.authService.url$.pipe(
+        map((x) => x + 'rest/api/2/search')
     );
-    public fields$: Observable<string[]> = this.getFields(); //.pipe(
-    //switchMap((x: string[]) => this.addFields(x)),
-    //switchMapTo(this.savedFields$)
-    // );
+    private issueUrl$: Observable<string> = this.authService.url$.pipe(
+        map((x) => x + 'rest/api/2/issue/')
+    );
+
+    public fields$: Observable<string[]> = this.getFields();
 
     public issues$: Observable<IIssueResponse[]> = combineLatest([
         this.statusService.selectedStatuses$,
         this.projectService.project$,
         this.fields$,
         this.url$,
+        this.refreshIssues$,
     ]).pipe(
         switchMap(([statuses, project, fields, url]) => {
             const issues: Observable<IIssueResponse>[] = [];
@@ -58,31 +56,6 @@ export class IssueService {
         })
     );
 
-    public removeFields(fieldNames: string[]): Observable<string[]> {
-        return this.fields$.pipe(
-            take(1),
-            map((old: string[]) => {
-                const newFields = old.filter((oldField: string) => !fieldNames.includes(oldField));
-                this.fields$$.next(newFields);
-                return newFields;
-            })
-        );
-    }
-
-    public addFields(fieldNames: string[]): Observable<string[]> {
-        return this.fields$.pipe(
-            take(1),
-            tap((x: string[]) => this.fields$$.next(fieldNames.concat(x)))
-        );
-    }
-
-    private saveFields(fieldNames: string[]): Observable<string[]> {
-        const validated = fieldNames.filter((x) => !!x);
-        return this.storageService
-            .setStorage$({ [this.fieldsKey]: validated })
-            .pipe(mapTo(validated));
-    }
-
     public getFields(): Observable<string[]> {
         return this.storageService.getStorage$().pipe(
             map((x) => {
@@ -97,11 +70,37 @@ export class IssueService {
             map((x: { transitions: ITransition[] }) => x.transitions)
         );
     }
+
+    public transition(transition: ITransition, issueId: string): Observable<void> {
+        var request: ITransitionRequest = {
+            transition: {
+                id: transition.id,
+            },
+            fields:
+                transition.to.name === 'Closed' || transition.to.name === 'Done'
+                    ? {
+                          resolution: { name: transition.to.statusCategory.name },
+                      }
+                    : null,
+        };
+        return this.issueUrl$.pipe(
+            switchMap((url: string) =>
+                this.http.post<void>(url + issueId + '/transitions', request)
+            ),
+            take(1),
+            tap(() => this.refreshIssues$.next(null))
+        );
+    }
 }
 
 interface ITransitionRequest {
     transition: {
-        id: number;
+        id: string;
+    };
+    fields: {
+        resolution: {
+            name: string;
+        };
     };
 }
 

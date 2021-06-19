@@ -27,6 +27,7 @@
         <div class="list-group">
             <div
                 *ngFor="let transition of transitions"
+                (click)="doTransition(transition)"
                 class="list-group-item list-group-item-action"
             >
                 <span class="icon-login"></span> {{ transition.to.name }}
