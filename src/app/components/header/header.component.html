@@ -3,15 +3,17 @@
         <h1>JSA</h1>
         <div class="ms-auto d-flex">
             <div class="my-auto">
-                <span class="my-auto" *ngIf="vm.url; else signIn">{{ vm.url }}</span>
+                <span class="my-auto" (click)="deleteProject()" *ngIf="vm.url; else signIn">{{
+                    vm.url
+                }}</span>
                 <span class="my-auto" *ngIf="vm.selectedProject">{{ vm.selectedProject.key }}</span>
-                <span
+                <small
                     class="ms-2 badge bg-secondary"
                     *ngIf="selectedStatuses.length > 0"
                     tabindex="0"
                     (click)="toggleStatuses()"
-                    ><span class="icon-down-open"></span
-                ></span>
+                    >status<span class="icon-down-open"></span
+                ></small>
             </div>
             <ng-template #signIn>
                 <p class="my-auto">Log in to use the app</p>

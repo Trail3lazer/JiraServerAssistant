@@ -49,7 +49,7 @@ export class ProjectService {
 
     public deleteProject(): Observable<void> {
         this.projectBS.next(null);
-        return this.storageService.deleteStorage$([this.projectCookieKey]);
+        return this.storageService.deleteStorage$([this.projectCookieKey]).pipe(take(1));
     }
 }
 

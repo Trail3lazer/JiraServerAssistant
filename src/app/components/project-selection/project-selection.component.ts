@@ -25,8 +25,7 @@ export class ProjectSelectionComponent {
         return item.id;
     };
 
-    public submit(event: any): void {
-        event.preventDefault();
+    public submit(): void {
         this.projectService.setProject(this.projectControl.value);
     }
 }
