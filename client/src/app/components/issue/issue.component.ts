@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 export class IssueComponent implements OnInit {
     @Input() issue: IIssue;
     @ViewChild('issueRef') issueRef;
+    public workLogHidden = true;
     public dropdownHidden = true;
     public transitions$: Observable<ITransition[]>;
     constructor(private readonly issueService: IssueService) {}
@@ -27,5 +28,9 @@ export class IssueComponent implements OnInit {
     }
     public doTransition(transition: ITransition): void {
         this.issueService.transition(transition, this.issue.id).subscribe();
+    }
+
+    public toggleWorkLog(): void {
+        this.workLogHidden = !this.workLogHidden
     }
 }

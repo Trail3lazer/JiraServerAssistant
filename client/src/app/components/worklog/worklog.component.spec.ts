@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LogWorkComponent } from './log-work.component';
+import { WorklogComponent } from './worklog.component';
 
-describe('LogWorkComponent', () => {
-  let component: LogWorkComponent;
-  let fixture: ComponentFixture<LogWorkComponent>;
+describe('WorklogComponent', () => {
+  let component: WorklogComponent;
+  let fixture: ComponentFixture<WorklogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LogWorkComponent ]
+      declarations: [ WorklogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LogWorkComponent);
+    fixture = TestBed.createComponent(WorklogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

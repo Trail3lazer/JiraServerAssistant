@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { VM } from '@app/app.component';
 import { ProjectService } from '@app/services/project/project.service';
 import { StatusService } from '@app/services/status/status.service';
@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class HeaderComponent implements OnChanges {
     @Input() vm: VM;
+    @ViewChild('titleRef') titleRef;
+    public dropdownHidden = true;
     public selectedStatuses: string[];
     constructor(
         private readonly authService: AuthService,
@@ -33,5 +35,17 @@ export class HeaderComponent implements OnChanges {
     }
     public deleteProject() {
         this.projectService.deleteProject().subscribe();
+    }
+    public deleteUrl() {
+        this.authService.deleteUrl();
+    }
+    
+    @HostListener('document:click', ['$event'])
+    public hideDropdown(event: any) {
+        if (this.dropdownHidden && this.titleRef.nativeElement.contains(event.target)) {
+            this.dropdownHidden = !this.dropdownHidden;
+        } else {
+            this.dropdownHidden = true;
+        }
     }
 }

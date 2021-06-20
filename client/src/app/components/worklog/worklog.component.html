@@ -1,0 +1,14 @@
+<div class="jumbotron bg-light p-2">
+    <div class="d-flex justify-content-between">
+        <h5 class="modal-title p-2">{{ issue.fields.summary }}</h5>
+        <button type="button" class="btn close" (click)="close.emit()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <ul *ngIf="workLogs$ | async as workLogs" class="list-group">
+        <li *ngFor="let entry of workLogs" class="list-group-item">
+            {{ entry.timeSpent }} {{ entry.comment }} {{ entry.author.name }}
+        </li>
+        <li *ngIf="!workLogs || workLogs.length < 1" class="list-group-item">No work logged.</li>
+    </ul>
+</div>

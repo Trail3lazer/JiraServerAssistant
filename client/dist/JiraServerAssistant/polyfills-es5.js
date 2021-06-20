@@ -4386,8 +4386,8 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\development\JiraServerAssistant\node_modules\@angular-devkit\build-angular\src\angular-cli-files\models\es5-polyfills.js */"mRIq");
-module.exports = __webpack_require__(/*! C:\development\JiraServerAssistant\src\polyfills.ts */"hN/g");
+__webpack_require__(/*! C:\development\JiraServerAssistant\client\node_modules\@angular-devkit\build-angular\src\angular-cli-files\models\es5-polyfills.js */"mRIq");
+module.exports = __webpack_require__(/*! C:\development\JiraServerAssistant\client\src\polyfills.ts */"hN/g");
 
 
 /***/ }),

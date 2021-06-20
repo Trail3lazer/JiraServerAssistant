@@ -1,4 +1,4 @@
-<form *ngIf="!vm.statusesHidden" [formGroup]="statusForm">
+<form [formGroup]="statusForm">
     <span *ngFor="let x of statusControls; trackById" class="me-2 mb-2 badge bg-light text-dark">
         <input
             [formControl]="x.control"

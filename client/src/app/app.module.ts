@@ -12,7 +12,8 @@ import { StatusesComponent } from './components/statuses/statuses.component';
 import { PendingComponent } from './components/pending/pending.component';
 import { IssueComponent } from './components/issue/issue.component';
 import { StatusComponent } from './components/status/status.component';
-import { LogWorkComponent } from './components/log-work/log-work.component';
+import { WorklogComponent } from './components/worklog/worklog.component';
+import { WorklogFormComponent } from './components/worklog-form/worklog-form.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { LogWorkComponent } from './components/log-work/log-work.component';
         PendingComponent,
         IssueComponent,
         StatusComponent,
-        LogWorkComponent,
+        WorklogComponent,
+        WorklogFormComponent,
     ],
     imports: [BrowserModule, HttpClientModule, FormsModule, ReactiveFormsModule],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true }],

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { Observable, forkJoin } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import { ProjectService } from '../project/project.service';
 import { StatusService } from '../status/status.service';
@@ -27,6 +27,7 @@ export class IssueService {
         map((x) => x + 'rest/api/2/search')
     );
     private issueUrl$: Observable<string> = this.authService.url$.pipe(
+        filter(x => !!x),
         map((x) => x + 'rest/api/2/issue/')
     );
 
@@ -47,12 +48,16 @@ export class IssueService {
                         startAt: 0,
                         maxResults: 20,
                         fields: fields,
-                        jql: `project = "${project.name}" AND status = "${status}" order by lastViewed DESC`,
+                        jql: `project = "${project.name}" AND status = "${status}" AND type != "Epic" order by lastViewed DESC`,
                     } as ISearchRequest)
                     .pipe(map((res: IIssueResponse) => ({ ...res, status: status })));
                 issues.push(res);
             }
             return forkJoin(issues);
+        }),
+        catchError(e => {
+            console.error(e);
+            return []
         })
     );
 
@@ -88,10 +93,54 @@ export class IssueService {
                 this.http.post<void>(url + issueId + '/transitions', request)
             ),
             take(1),
-            tap(() => this.refreshIssues$.next(null))
+            tap(this.refreshIssues)
+        );
+    }
+
+    public refreshIssues() {
+        this.refreshIssues$.next(null);
+    }
+
+    public getWorkLog(issueId: string): Observable<IWorkLog[]> {
+        return this.issueUrl$.pipe(
+            switchMap(url => this.http.get<IWorkLogResponse>(url+issueId+ "/worklog")),
+            map((x: IWorkLogResponse) => x.worklogs),
+        );
+    }
+
+    public addWorkLog(issueId: string, timeSpent: string = null, comment: string = null): Observable<null> {
+        const body: IWorkLogRequest = {
+            comment: comment,
+            timeSpent: timeSpent
+        }
+        return this.issueUrl$.pipe(
+            switchMap(url => this.http.post(url+issueId+ "/worklog", body)),
+            mapTo(null)
         );
     }
 }
+
+interface IWorkLogRequest{
+    comment: string,
+    timeSpent: string;
+}
+
+export interface IWorkLog {
+    author:{
+      name: string;
+      displayName: string;
+    },
+    comment: string;
+    updated: string;
+    started: string;
+    timeSpent: string;
+    timeSpentSeconds: number;
+}
+  
+interface IWorkLogResponse {
+    worklogs: IWorkLog[];
+}
+  
 
 interface ITransitionRequest {
     transition: {

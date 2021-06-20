@@ -22,13 +22,13 @@ export class AppComponent implements OnInit {
 
     public ngOnInit() {
         this.vm$ = combineLatest([
-            this.authService.isSignedIn$,
-            this.projectService.availableProjects$,
-            this.projectService.project$,
-            this.authService.url$,
-            this.statusService.statuses$,
-            this.statusService.statusesHidden$,
-            this.issueService.issues$,
+            this.authService.isSignedIn$.pipe(startWith(false)),
+            this.projectService.availableProjects$.pipe(startWith([])),
+            this.projectService.project$.pipe(startWith([null])),
+            this.authService.url$.pipe(startWith([null])),
+            this.statusService.statuses$.pipe(startWith([])),
+            this.statusService.statusesHidden$.pipe(startWith(false)),
+            this.issueService.issues$.pipe(startWith([])),
         ]).pipe(
             map(
                 ([
@@ -52,17 +52,7 @@ export class AppComponent implements OnInit {
                     vm.flowState = this.getFlowState(vm);
                     return vm;
                 }
-            ),
-            startWith({
-                isSignedIn: false,
-                flowState: FlowState.Loading,
-                projects: [],
-                selectedProject: null,
-                statuses: [],
-                statusesHidden: false,
-                url: null,
-                issues: [],
-            } as VM)
+            )
         );
     }
 

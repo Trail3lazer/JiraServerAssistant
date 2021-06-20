@@ -1,9 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import flatten from 'lodash-es/flatten';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { tap, switchMapTo, map } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
+import { tap, switchMapTo, map, startWith } from 'rxjs/operators';
 import { ProjectService } from '../project/project.service';
 import { StorageService } from '../storage/storage.service';
 
@@ -30,11 +28,11 @@ export class StatusService {
         switchMapTo(this.selectedStatuses$$)
     );
 
-    public statuses$ = combineLatest([
+    public statuses$: Observable<IStatus[]> = combineLatest([
         this.projectService.issueTypes$,
         this.selectedStatuses$,
     ]).pipe(
-        map(([x, selected]) => {
+        map(([x , selected]) => {
             const statusesDeep = x.map((issueType) => issueType.statuses);
             const statusList = flatten(statusesDeep);
             const statusDict: { [name: string]: IStatus } = {};

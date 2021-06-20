@@ -1,15 +1,15 @@
 <div class="bg-primary text-white mb-2">
     <div class="d-flex justify-content-between mx-3">
-        <h1>JSA</h1>
+        <h1 #titleRef>JSA</h1>
         <div class="ms-auto d-flex">
             <div class="my-auto">
-                <span class="my-auto" (click)="deleteProject()" *ngIf="vm.url; else signIn">{{
+                <span class="my-auto" *ngIf="vm.url; else signIn">{{
                     vm.url
                 }}</span>
-                <span class="my-auto" *ngIf="vm.selectedProject">{{ vm.selectedProject.key }}</span>
+                <span class="my-auto" *ngIf="vm.isSignedIn && vm.selectedProject">{{ vm.selectedProject.key }}</span>
                 <small
                     class="ms-2 badge bg-secondary"
-                    *ngIf="selectedStatuses.length > 0"
+                    *ngIf="vm.isSignedIn && vm.selectedProject"
                     tabindex="0"
                     (click)="toggleStatuses()"
                     >status<span class="icon-down-open"></span
@@ -20,4 +20,8 @@
             </ng-template>
         </div>
     </div>
+</div>
+<div *ngIf="!dropdownHidden" class="list-group">
+    <button type="button" *ngIf="vm.url" (click)="deleteUrl()" class="list-group-item list-group-item-action">Change Url</button>
+    <button type="button" *ngIf="vm.selectedProject" (click)="deleteProject()" class="list-group-item list-group-item-action">Change Project</button>
 </div>

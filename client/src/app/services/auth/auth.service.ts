@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, bindCallback, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
     filter,
     map,
-    shareReplay,
-    startWith,
     switchMap,
     switchMapTo,
     take,
@@ -23,7 +21,7 @@ export class AuthService {
         switchMapTo(this.sessionValue$$),
         map((x) => !!x)
     );
-    public url$: Observable<string> = this.url$$.pipe(filter((x) => !!x));
+    public url$: Observable<string> = this.url$$.asObservable();
     private urlKey = '0b49dde5-f271-49ae-9bc3-f6454210d1e5';
     private authUrl$ = this.url$$.pipe(
         filter((x) => !!x),
@@ -73,6 +71,11 @@ export class AuthService {
                 this.sessionValue$$.next(null);
             })
         );
+    }
+
+    public deleteUrl() {
+        this.url$$.next(null);
+        this.sessionValue$$.next(null);
     }
 
     public getCookieHeader(): Observable<string> {

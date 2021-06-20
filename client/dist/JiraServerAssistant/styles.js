@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\development\JiraServerAssistant\src\styles.sass */"F4Rk");
+module.exports = __webpack_require__(/*! C:\development\JiraServerAssistant\client\src\styles.sass */"F4Rk");
 
 
 /***/ }),
