@@ -11,6 +11,7 @@ export class IssueComponent implements OnInit {
     @Input() issue: IIssue;
     @ViewChild('issueRef') issueRef;
     public workLogHidden = true;
+    public workLogFormHidden = true;
     public dropdownHidden = true;
     public transitions$: Observable<ITransition[]>;
     constructor(private readonly issueService: IssueService) {}
@@ -32,5 +33,9 @@ export class IssueComponent implements OnInit {
 
     public toggleWorkLog(): void {
         this.workLogHidden = !this.workLogHidden
+    }
+
+    public toggleWorkLogForm(): void {
+        this.workLogFormHidden = !this.workLogFormHidden
     }
 }

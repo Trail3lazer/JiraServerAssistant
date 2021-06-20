@@ -32,10 +32,14 @@
             >
                 <span class="icon-login"></span> {{ transition.to.name }}
             </div>
+            <div (click)="toggleWorkLogForm()" class="list-group-item list-group-item-action">Log Work</div>
             <div (click)="toggleWorkLog()" class="list-group-item list-group-item-action">Show Work Log</div>
         </div>
     </div>
 </div>
 <div *ngIf="!workLogHidden">
     <app-worklog [issue]="issue" (close)="toggleWorkLog()"></app-worklog>
+</div>
+<div *ngIf="!workLogFormHidden">
+    <app-worklog-form [issue]="issue" (close)="toggleWorkLogForm()"></app-worklog-form>
 </div>

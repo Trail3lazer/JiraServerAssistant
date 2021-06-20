@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
     }
 
     public onSubmit(): void {
-        const url = this.urlControl.value;
+        const url = `https://${this.urlControl.value}/`;
         this.authService.getJiraCredentials(url).pipe(take(1)).subscribe();
     }
 }

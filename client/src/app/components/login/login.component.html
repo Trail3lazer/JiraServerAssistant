@@ -5,7 +5,7 @@
             name="jiraUrl"
             type="url"
             class="form-control mb-3 me-2"
-            placeholder="https://jira.example.com"
+            placeholder="jira.example.com"
             formControlName="url"
             autocomplete="url"
             [ngClass]="{ 'is-invalid': urlControl.touched && urlControl.invalid }"
@@ -13,4 +13,5 @@
         />
         <button class="btn btn-primary mb-3">Submit</button>
     </div>
+    <small class="help-text">Please input the url starting after https:// and ending with the top level domain (e.g. ".com", ".org") </small>
 </form>

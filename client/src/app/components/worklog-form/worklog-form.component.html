@@ -1,1 +1,24 @@
-<p>worklog-form works!</p>
+<div class="jumbotron bg-light p-2">
+    <div class="d-flex justify-content-between">
+        <h5 class="modal-title">{{ issue.fields.summary }}</h5>
+        <button type="button" class="btn close" (click)="close.emit()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form [formGroup]="workLogForm">
+        <div class="form-group">
+            <label>Time spent</label>
+            <input type="text" class="form-control" [ngClass]="timeSpentControl.invalid && timeSpentControl.touched ? 'is-invalid' : null" [formControl]="timeSpentControl" placeholder="1d 4h">
+            <div class="invalid-feedback">
+                Please add time spent to submit a work log.
+            </div>
+            <small *ngIf="!timeSpentControl.touched" class="form-text text-muted">Please format time spent as you would in Jira</small>
+            
+        </div>
+        <div class="form-group">
+            <label>Comment</label>
+            <input type="text" class="form-control" [formControl]="commentControl" placeholder="Feature completed">
+        </div>
+        <button class="btn btn-primary" (click)="submit()">Submit</button>
+    </form>
+</div>
