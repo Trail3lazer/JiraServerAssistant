@@ -15,10 +15,13 @@
             }
         ]
     },
-    "permissions": ["storage", "declarativeNetRequest", "cookies"],
+    "permissions": ["declarativeNetRequest", "cookies", "storage"],
 
     "action": {
         "default_popup": "index.html"
     },
-    "host_permissions": ["https://*/"]
+    "host_permissions": ["https://*/"],
+    "icons": 
+       { "128": "assets/thumbnail 128x128.png"}
+    
 }
